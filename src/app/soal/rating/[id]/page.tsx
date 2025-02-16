@@ -20,7 +20,7 @@ export default function BeriRating({ params }: { params: { id: string } }) {
 
     try {
       const response = await axios.post(
-        `http://localhost:3500/api/soal/rating/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/soal/rating/${id}`,
         {
           rating,
           feedback,

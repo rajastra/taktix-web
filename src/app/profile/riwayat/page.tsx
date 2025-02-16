@@ -50,7 +50,7 @@ export default function Riwayat({ params }: { params: { id: string } }) {
 
   const fetchRiwayat = async (userId: string) => {
     try {
-      const response = await fetch("http://localhost:3500/api/historyall");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/historyall`);
       const data: RiwayatItem[] = await response.json();
 
       // Filter data sesuai dengan user_id dari token

@@ -18,7 +18,7 @@ export default function KunciJawaban({ params }: { params: { id: string } }) {
 
       try {
         const response = await fetch(
-          `http://localhost:3500/api/soal/kunci_jawaban/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/soal/kunci_jawaban/${id}`,
           {
             method: "GET",
             headers: {

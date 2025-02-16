@@ -31,7 +31,7 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
 
   const fetchExamDetail = async (token: string) => {
     try {
-      const response = await axios.get(`http://localhost:3500/api/soal/${id}`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/soal/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

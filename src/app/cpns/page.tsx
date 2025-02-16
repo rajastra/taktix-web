@@ -35,7 +35,7 @@ export default function CPNS() {
   const fetchExams = async (token: string) => {
     try {
       const response = await fetch(
-        "http://localhost:3500/api/soal?category_id=1",
+        `${process.env.NEXT_PUBLIC_API_URL}/soal?category_id=1`,
         {
           method: "GET",
           headers: {

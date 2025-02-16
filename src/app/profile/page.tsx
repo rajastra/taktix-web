@@ -48,7 +48,7 @@ export default function Profile() {
     try {
       // API request untuk cek history berdasarkan soal id
       const response = await axios.get(
-        `http://localhost:3500/api/historyall`, // URL API untuk cek history
+        `${process.env.NEXT_PUBLIC_API_URL}/historyall`, // URL API untuk cek history
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -141,7 +141,7 @@ export default function SemuaSoal() {
 
   const fetchExams = async (token: string) => {
     try {
-      const response = await axios.get("http://localhost:3500/api/soal", {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/soal`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

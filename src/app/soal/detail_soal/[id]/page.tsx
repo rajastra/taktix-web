@@ -40,7 +40,7 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
   const fetchExamDetail = async (token: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3500/api/soal/${id}`, // Correct URL with dynamic ID
+        `${process.env.NEXT_PUBLIC_API_URL}/soal/${id}`, // Correct URL with dynamic ID
         {
           method: "GET",
           headers: {
@@ -77,7 +77,7 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
     try {
       // API request untuk cek history berdasarkan soal id
       const response = await axios.get(
-        `http://localhost:3500/api/historya/${id}`, // URL API untuk cek history
+        `${process.env.NEXT_PUBLIC_API_URL}/historya/${id}`, // URL API untuk cek history
         {
           headers: {
             Authorization: `Bearer ${token}`,

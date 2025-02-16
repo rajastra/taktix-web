@@ -222,7 +222,7 @@ export default function KerjakanSoal({ params }: { params: { id: string } }) {
     const token = localStorage.getItem("token");
     if (id) {
       axios
-        .get(`http://localhost:3500/api/soali/${id}`, {
+        .get(`${process.env.NEXT_PUBLIC_API_URL}/soali/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -283,7 +283,7 @@ export default function KerjakanSoal({ params }: { params: { id: string } }) {
         }));
 
         axios
-          .post("http://localhost:3500/api/answers", {
+          .post(`${process.env.NEXT_PUBLIC_API_URL}/answers`, {
             user_id: userId,
             soal_id: id,
             answers,

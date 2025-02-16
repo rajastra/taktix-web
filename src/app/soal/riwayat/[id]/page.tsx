@@ -47,7 +47,7 @@ export default function Riwayat({ params }: { params: { id: string } }) {
     const fetchRiwayat = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3500/api/historya/${id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/historya/${id}`
         );
         const data = await response.json();
         setRiwayat(data);
