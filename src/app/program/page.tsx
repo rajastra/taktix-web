@@ -19,7 +19,7 @@ export default function Program() {
   useEffect(() => {
     const fetchPrograms = async (token: string) => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/programs`, {
+        const response = await axios.get(`https://taktix.live/programs`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
