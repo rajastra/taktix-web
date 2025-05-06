@@ -20,7 +20,7 @@ export default function Materi() {
     const fetchMateri = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3500/materi/${id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/materi/${id}`
         );
         const data = await response.json();
         console.log(data);

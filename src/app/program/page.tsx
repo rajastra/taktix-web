@@ -19,7 +19,7 @@ export default function Program() {
   useEffect(() => {
     const fetchPrograms = async (token: string) => {
       try {
-        const response = await axios.get("http://localhost:3500/programs", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/programs`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

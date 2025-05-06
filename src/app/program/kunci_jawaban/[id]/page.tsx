@@ -24,7 +24,7 @@ export default function ProgramKunciJawaban({
 
       try {
         const response = await fetch(
-          `http://localhost:3500/programs/soal/kunci_jawaban/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/programs/soal/kunci_jawaban/${id}`,
           {
             method: "GET",
             headers: {
