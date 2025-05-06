@@ -25,7 +25,7 @@ export default function KerjakanSoal({ params }: { params: { id: string } }) {
     const token = localStorage.getItem("token");
     if (id) {
       axios
-        .get(`${process.env.NEXT_PUBLIC_API_URL}/programs/soali/${id}`, {
+        .get(`https://taktix.live/programs/soali/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -87,7 +87,7 @@ export default function KerjakanSoal({ params }: { params: { id: string } }) {
         }));
 
         axios
-          .post(`${process.env.NEXT_PUBLIC_API_URL}/programs/answers`, {
+          .post(`https://taktix.live/programs/answers`, {
             user_id: userId,
             soal_id: id,
             answers,

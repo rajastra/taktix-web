@@ -28,7 +28,7 @@ export default function TryOut({ params }: { params: { id: string } }) {
       try {
         const response = await axios.get(
           // `https://web-production-d612.up.railway.app/http://api.program.taktix.co.id/program/${id}/tryout`,
-          `${process.env.NEXT_PUBLIC_API_URL}/programs/tryout/${id}`,
+          `https://taktix.live/programs/tryout/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

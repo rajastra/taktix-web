@@ -40,7 +40,7 @@ export default function ProgramSoalDetail({ params }: { params: { id: string } }
   const fetchExamDetail = async (token: string) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/programs/tryout/detail/${id}`,
+        `https://taktix.live/programs/tryout/detail/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -72,7 +72,7 @@ export default function ProgramSoalDetail({ params }: { params: { id: string } }
     try {
       // API request untuk cek history berdasarkan soal id
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/programs/historya/${id}`, // URL API untuk cek history
+        `https://taktix.live/programs/historya/${id}`, // URL API untuk cek history
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -24,7 +24,7 @@ export default function ProgramKunciJawaban({
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/programs/soal/kunci_jawaban/${id}`,
+          `https://taktix.live/programs/soal/kunci_jawaban/${id}`,
           {
             method: "GET",
             headers: {

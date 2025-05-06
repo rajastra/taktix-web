@@ -47,7 +47,7 @@ export default function ProgramRiwayat({ params }: { params: { id: string } }) {
     const fetchRiwayat = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/programs/historya/${id}`
+          `https://taktix.live/programs/historya/${id}`
         );
         const data = await response.json();
         setRiwayat(data);

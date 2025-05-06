@@ -26,7 +26,7 @@ export default function ProgramDetail() {
       try {
         const response = await axios.get(
           // `https://web-production-d612.up.railway.app/http://api.program.taktix.co.id/program/${id}`,
-          `${process.env.NEXT_PUBLIC_API_URL}/programs/${id}`,
+          `https://taktix.live/programs/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
