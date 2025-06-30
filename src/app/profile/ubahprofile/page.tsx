@@ -32,7 +32,7 @@ const UbahProfile = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://api-staging.taktix.co.id/provinces",
+          "https://api.taktix.co.id/provinces",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -49,7 +49,7 @@ const UbahProfile = () => {
       const token = localStorage.getItem("token");
       try {
         const res = await axios.get(
-          "https://api-staging.taktix.co.id/profile",
+          "https://api.taktix.co.id/profile",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ const UbahProfile = () => {
 
     try {
       await axios.put(
-        "https://api-staging.taktix.co.id/profile/edit",
+        "https://api.taktix.co.id/profile/edit",
         formData,
         {
           headers: {

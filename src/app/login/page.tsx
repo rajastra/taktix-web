@@ -28,7 +28,7 @@ export default function LoginPage() {
 
     try {
       const response = await axios.post(
-        "https://api-staging.taktix.co.id/login",
+        "https://api.taktix.co.id/login",
         {
           email: formData.email,
           password: formData.password,

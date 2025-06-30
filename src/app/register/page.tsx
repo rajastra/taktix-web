@@ -35,7 +35,7 @@ export default function LoginPage() {
   const validateUsername = async () => {
     try {
       const response = await axios.post(
-        "https://api-staging.taktix.co.id/register/validation/1",
+        "https://api.taktix.co.id/register/validation/1",
         {
           name: formData.name,
           username: formData.username,
@@ -67,7 +67,7 @@ export default function LoginPage() {
   const validateEmailPhone = async () => {
     try {
       const response = await axios.post(
-        "https://api-staging.taktix.co.id/register/validation/2",
+        "https://api.taktix.co.id/register/validation/2",
         {
           email: formData.email,
           phone_number: formData.phone_number,
@@ -107,7 +107,7 @@ export default function LoginPage() {
 
     try {
       const response = await axios.post(
-        "https://api-staging.taktix.co.id/register",
+        "https://api.taktix.co.id/register",
         formData,
         {
           headers: {
