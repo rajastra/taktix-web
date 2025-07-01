@@ -18,7 +18,7 @@ export default function UniversitiesChart() {
     const fetchData = async (token: string) => {
       try {
         const response = await axios.get(
-          "https://web-production-d612.up.railway.app/http://api.program.taktix.co.id/university?page=1&pageSize=1000",
+          "https://api.program.taktix.co.id/university?page=1&pageSize=1000",
           {
             headers: {
               Authorization: `Bearer ${token}`,
