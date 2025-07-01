@@ -35,7 +35,7 @@ export default function Kedinasan() {
   const fetchExams = async (token: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/soal?category_id=2`,
+        "https://api.taktix.co.id/exam?page=1&per_page=20&category_id=4003&title=&is_public=true",
         {
           method: "GET",
           headers: {

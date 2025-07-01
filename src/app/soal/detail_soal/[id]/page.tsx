@@ -1,16 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // To navigate dynamically
+import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-import Swal from "sweetalert2"; // Import SweetAlert
+import Swal from "sweetalert2";
 
 export default function SoalDetail({ params }: { params: { id: string } }) {
   const [name, setName] = useState("");
   const [photoProfile, setPhotoProfile] = useState("");
-  const [exam, setExam] = useState<any>(null); // State for storing exam data
-  const { id } = params; // Extracting soalId from the URL
-  const router = useRouter(); // Hook for navigating
+  const [exam, setExam] = useState<any>(null);
+  const { id } = params;
+  const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -19,10 +19,10 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
       try {
         const decoded: any = jwtDecode(token);
         const user = decoded.user;
-        console.log(user.id);
+        console.log("User ID:", user.id);
         setName(user.name);
         setPhotoProfile(user.photo_profile);
-        console.log(token)
+        console.log("Token:", token);
 
         fetchExamDetail(token);
       } catch (error) {
@@ -33,35 +33,26 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
     }
   }, [id]);
 
-  const handleBeriRating = () => {
-    router.push(`/soal/rating/${id}`);
-  };
-
   const fetchExamDetail = async (token: string) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/soal/${id}`, // Correct URL with dynamic ID
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`https://api.taktix.co.id/student/exam/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch exam details");
-      }
-
-      const data = await response.json();
-      setExam(data);
+      setExam(response.data);
     } catch (error) {
-      console.error("Error fetching exam:", error);
+      console.error(`Error fetching exam detail for ID ${id}:`, error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed to fetch exam",
+        text: "Unable to load exam details. Please try again.",
+      });
     }
   };
 
-  // Fungsi untuk cek history
   const handleCheckHistory = async () => {
     const token = localStorage.getItem("token");
 
@@ -75,30 +66,27 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
     }
 
     try {
-      // API request untuk cek history berdasarkan soal id
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/historya/${id}`, // URL API untuk cek history
+        `https://api.taktix.co.id/student/exam/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
 
-      // Menampilkan notifikasi bahwa history ditemukan
       if (response.data) {
         Swal.fire({
           icon: "success",
           title: "History found",
           text: "Your exam history is available.",
         });
-
-        // Navigate to the next page (e.g., Kerjakan Soal)
         router.push(`/soal/riwayat/${id}`);
-        console.log(response.data);
+        console.log("History response:", response.data);
       }
     } catch (error) {
-      console.error("Error fetching history:", error);
+      console.error(`Error fetching history for exam ID ${id}:`, error);
       Swal.fire({
         icon: "error",
         title: "History not found",
@@ -107,9 +95,12 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
     }
   };
 
-  // Navigate to the Kerjakan Soal page with the correct soalId
+  const handleBeriRating = () => {
+    router.push(`/soal/rating/${id}`);
+  };
+
   const handleStartExam = () => {
-    router.push(`/soal/kerjakan_soal/${id}`); // Redirect to Kerjakan Soal page
+    router.push(`/soal/kerjakan_soal/${id}`);
   };
 
   if (!exam) {
@@ -121,7 +112,7 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <div className="h-6 w-2 rounded-lg bg-yellow-300"></div>
-          <h1 className="ml-4 my-2">Detail Soal</h1>
+          <h1 className="ml-4 my-2">Detail Ujian Kedinasan</h1>
         </div>
       </div>
 
@@ -135,14 +126,42 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
 
           {/* Details Section */}
           <div className="grid grid-cols-3 gap-4 text-white">
-            {/* Display exam details like category, total questions, etc. */}
             <div className="flex flex-col">
               <span className="text-[18px] font-normal">Kategori</span>
               <span className="text-[18px] font-semibold">
                 {exam.category?.name || "N/A"}
               </span>
             </div>
-            {/* Other exam details */}
+            <div className="flex flex-col">
+              <span className="text-[18px] font-normal">Kategori Ujian</span>
+              <span className="text-[18px] font-semibold">
+                {exam.exam_category?.name || "N/A"}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[18px] font-normal">Harga</span>
+              <span className="text-[18px] font-semibold">
+                {exam.is_free ? "Gratis" : "Berbayar"}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[18px] font-normal">Jumlah Soal</span>
+              <span className="text-[18px] font-semibold">
+                {exam.total_question} Soal
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[18px] font-normal">Durasi</span>
+              <span className="text-[18px] font-semibold">
+                {exam.duration} Menit
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[18px] font-normal">Publikasi</span>
+              <span className="text-[18px] font-semibold">
+                {exam.is_public ? "Publik" : "Privat"}
+              </span>
+            </div>
           </div>
 
           {/* Button Section */}
@@ -159,7 +178,6 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
             >
               Lihat Kunci Jawaban
             </button>
-            {/* Button to Check History */}
             <button
               className="w-[240px] h-[52px] bg-red-700 text-white text-xl font-semibold rounded-[20px]"
               onClick={handleCheckHistory}
@@ -167,8 +185,8 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
               Cek History
             </button>
             <button
-              onClick={handleBeriRating}
               className="w-[240px] h-[52px] bg-yellow-400 text-white text-xl font-semibold rounded-[20px]"
+              onClick={handleBeriRating}
             >
               Beri Rating
             </button>

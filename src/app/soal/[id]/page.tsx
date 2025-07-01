@@ -31,7 +31,7 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
 
   const fetchExamDetail = async (token: string) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/soal/${id}`, {
+      const response = await axios.get(`https://api.taktix.co.id/student/exam/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -40,7 +40,7 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
 
       setExam(response.data); // Mengatur state exam dengan data yang diterima
     } catch (error) {
-      console.error("Error fetching exam:", error);
+      console.error(`Error fetching exam detail for ID ${id}:`, error);
     }
   };
 
@@ -54,7 +54,7 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <div className="h-6 w-2 rounded-lg bg-yellow-300"></div>
-          <h1 className="ml-4 my-2">Detail Ujian</h1>
+          <h1 className="ml-4 my-2">Detail Ujian Kedinasan</h1>
         </div>
       </div>
 
@@ -71,13 +71,13 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
             <div className="flex flex-col">
               <span className="text-[18px] font-normal">Kategori</span>
               <span className="text-[18px] font-semibold">
-                {exam.category?.name || "N/A"}{" "}
+                {exam.category?.name || "N/A"}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-[18px] font-normal">Kategori Ujian</span>
               <span className="text-[18px] font-semibold">
-                {exam.exam_category?.name || "N/A"}{" "}
+                {exam.exam_category?.name || "N/A"}
               </span>
             </div>
             <div className="flex flex-col">
@@ -116,7 +116,6 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
-
       {/* Main item finish */}
     </div>
   );

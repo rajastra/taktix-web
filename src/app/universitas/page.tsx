@@ -1,49 +1,71 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
-import UniversitiesChart from "./UniversitiesCharts";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
+import { useRouter } from "next/navigation";
 
 interface University {
-  id: number;
+  id: string;
   name: string;
+  for_free: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
-export default function Universitas() {
+interface UniversityResponse {
+  status: number;
+  message: string;
+  errors: any;
+  data: {
+    page: number;
+    page_size: number;
+    total: number;
+    total_pages: number;
+    universities: University[];
+  };
+}
+
+interface UniversityDetailProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function UniversityDetail({ params }: UniversityDetailProps) {
   const router = useRouter();
   const [universities, setUniversities] = useState<University[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const { id } = params;
 
   useEffect(() => {
-    const fetchUniversities = async (token: string) => {
+    const fetchUniversityData = async (token: string) => {
       try {
         const response = await axios.get(
-          `https://api.program.taktix.co.id/university?page=1&pageSize=1000`,
+          "http://api.program.taktix.co.id/university?page=1&pageSize=5",
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setUniversities(response.data.data.universities);
-        // console.log(response.data);
+        // Set data universities dari respons
+        setUniversities(response.data.data.universities || []);
       } catch (error) {
-        console.error("Error fetching universities:", error);
+        console.error("Error fetching university data:", error);
       }
     };
 
+    // Ambil token dari localStorage (atau ganti dengan token dari web asli)
     const token = localStorage.getItem("token");
     if (token) {
-      fetchUniversities(token);
+      fetchUniversityData(token);
+    } else {
+      console.warn("No token found, please login or set token manually.");
+      // Untuk pengujian, hardcode token dari web asli di sini sementara
+      // const manualToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+      // fetchUniversityData(manualToken);
     }
   }, []);
-
-  const filteredUniversities = universities.filter((university) =>
-    university.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="mx-40 my-14">
@@ -51,58 +73,30 @@ export default function Universitas() {
         <button type="button" className="mt-1" onClick={() => router.back()}>
           <FontAwesomeIcon icon={faArrowLeft} className="size-5 opacity-75" />
         </button>
-        <h1 className="ml-4 my-2">Universitas</h1>
+        <h1 className="ml-4 my-2">Daftar Universitas</h1>
       </div>
 
-      <form className="max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
-        <label htmlFor="default-search" className="sr-only">
-          Search
-        </label>
-        <div className="relative">
-          <input
-            type="search"
-            id="default-search"
-            className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Cari Universitas..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setSearchTerm(searchTerm)}
-            className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-4 py-2"
-          >
-            Search
-          </button>
-        </div>
-      </form>
-
-      <div>
-        <UniversitiesChart />
-      </div>
-
-      <div className="overflow-x-auto rounded-lg border max-w-[682px] mx-auto mt-4">
-        <table className="min-w-full divide-y divide-black bg-white text-sm">
+      <div className="overflow-x-auto rounded-lg border border-solid black max-w-[682px] mx-auto mt-4">
+        <table className="min-w-full divide-y-2 divide-black bg-white text-sm">
           <tbody className="divide-y divide-black">
-            {filteredUniversities.length > 0 ? (
-              filteredUniversities.map((university) => (
-                <tr key={university.id}>
-                  <td className="whitespace-nowrap px-4 py-4 font-medium">
-                    <Link
-                      href={`/universitas/detail_universitas/${university.id}`}
-                    >
-                      {university.name}
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td className="px-4 py-4 text-center font-medium">
-                  Tidak ada universitas yang ditemukan
+            {universities.map((university) => (
+              <tr key={university.id}>
+                <td className="whitespace-nowrap px-4 py-4 font-medium">
+                  <div className="text-base text-black">
+                    {university.name}
+                    {university.for_free ? " (Gratis)" : ""}
+                  </div>
+                  <div className="mt-1.5 text-base text-neutral-500">
+                    ID: {university.id}
+                    <br />
+                    Dibuat: {new Date(university.created_at).toLocaleDateString()}
+                    <br />
+                    Diperbarui:{" "}
+                    {new Date(university.updated_at).toLocaleDateString()}
+                  </div>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>

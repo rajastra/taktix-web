@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
-import Swal from "sweetalert2"; 
+import { jwtDecode } from "jwt-decode";
+import Swal from "sweetalert2";
 import axios from "axios";
 
 export default function Profile() {
@@ -26,7 +26,7 @@ export default function Profile() {
         setEmail(user.email);
       } catch (error) {
         console.error("Invalid token:", error);
-        setName(""); // Clear name and photoProfile in case of token error
+        setName("");
         setPhotoProfile("");
         setEmail("");
       }
@@ -46,9 +46,8 @@ export default function Profile() {
     }
 
     try {
-      // API request untuk cek history berdasarkan soal id
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/historyall`, // URL API untuk cek history
+        `${process.env.NEXT_PUBLIC_API_URL}/student/exam-pagination?page=1&per_page=20`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,17 +55,19 @@ export default function Profile() {
         }
       );
 
-      // Menampilkan notifikasi bahwa history ditemukan
-      if (response.data) {
+      if (response.data && response.data.data.length > 0) {
         Swal.fire({
           icon: "success",
           title: "History found",
           text: "Your exam history is available.",
         });
-
-        // Navigate to the next page (e.g., Kerjakan Soal)
         router.push(`/profile/riwayat`);
-        console.log(response.data);
+      } else {
+        Swal.fire({
+          icon: "info",
+          title: "No History",
+          text: "No exam history available.",
+        });
       }
     } catch (error) {
       console.error("Error fetching history:", error);
@@ -95,7 +96,6 @@ export default function Profile() {
               style={{
                 backgroundImage: `url(${photoProfile})`,
                 backgroundSize: "cover",
-                // backgroundPosition: "center",
               }}
             />
           </div>
@@ -116,10 +116,7 @@ export default function Profile() {
             onClick={handleCheckHistory}
           >
             <span>Soal Ujian Saya</span>
-            <FontAwesomeIcon
-              icon={faChevronRight}
-              className="size-5 opacity-75"
-            />
+            <FontAwesomeIcon icon={faChevronRight} className="size-5 opacity-75" />
           </div>
         </div>
       </div>
@@ -130,10 +127,7 @@ export default function Profile() {
           <Link href="/profile/ubahprofile">
             <div className="flex justify-between items-center">
               <span>Ubah Profile</span>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="size-5 opacity-75"
-              />
+              <FontAwesomeIcon icon={faChevronRight} className="size-5 opacity-75" />
             </div>
           </Link>
         </div>
@@ -141,10 +135,7 @@ export default function Profile() {
           <Link href="/profile/ubahpassword">
             <div className="flex justify-between items-center">
               <span>Ubah Password</span>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="size-5 opacity-75"
-              />
+              <FontAwesomeIcon icon={faChevronRight} className="size-5 opacity-75" />
             </div>
           </Link>
         </div>
@@ -152,10 +143,7 @@ export default function Profile() {
           <Link href="">
             <div className="flex justify-between items-center">
               <span>Hapus Akun</span>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="size-5 opacity-75"
-              />
+              <FontAwesomeIcon icon={faChevronRight} className="size-5 opacity-75" />
             </div>
           </Link>
         </div>
@@ -163,4 +151,3 @@ export default function Profile() {
     </div>
   );
 }
-

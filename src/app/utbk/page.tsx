@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
 import { useRouter } from "next/navigation";
 
-export default function UTBK() {
+export default function Kedinasan() {
   const [name, setName] = useState("");
   const [photoProfile, setPhotoProfile] = useState("");
   const [exams, setExams] = useState([]);
@@ -35,7 +35,7 @@ export default function UTBK() {
   const fetchExams = async (token: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/soal?category_id=3`,
+        "https://api.taktix.co.id/exam?page=1&per_page=20&category_id=4001&title=&is_public=true",
         {
           method: "GET",
           headers: {
@@ -46,7 +46,7 @@ export default function UTBK() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch exams");
+        throw new Error(`Failed to fetch exams: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -78,7 +78,7 @@ export default function UTBK() {
           <div
             key={exam.id}
             className="flex flex-col flex-1 px-5 py-3 bg-white rounded-3xl border border-solid border-zinc-500"
-            style={{ minHeight: "100px" }} // Menyediakan tinggi minimum yang konsisten
+            style={{ minHeight: "100px" }}
           >
             {/* Heading and Title */}
             <div className="flex gap-2.5 text-base whitespace-normal break-words">
@@ -95,8 +95,6 @@ export default function UTBK() {
 
             {/* Footer (Question Count, Duration, and Link) */}
             <div className="flex gap-5 justify-between mt-auto">
-              {" "}
-              {/* mt-auto forces the footer to stick at the bottom */}
               <div className="gap-0 my-auto text-neutral-400">
                 {exam.total_question} Soal {exam.duration} Menit
               </div>
@@ -104,7 +102,7 @@ export default function UTBK() {
                 href={`/soal/${exam.id}`}
                 className="justify-center px-3.5 py-2 bg-green-400 text-white rounded"
               >
-                Gratis
+                {exam.is_free ? "Gratis" : "Mulai"}
               </Link>
             </div>
           </div>

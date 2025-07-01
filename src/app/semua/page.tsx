@@ -141,14 +141,23 @@ export default function SemuaSoal() {
 
   const fetchExams = async (token: string) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/soal`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "https://api.taktix.co.id/exam?page=1&per_page=20&category_id=4003&title=&is_public=true",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      setExams(response.data.data); // Set exams data to state
+      if (!response.ok) {
+        throw new Error("Failed to fetch exams");
+      }
+
+      const data = await response.json();
+      setExams(data.data); // Set exams data to state
     } catch (error) {
       console.error("Error fetching exams:", error);
     }
