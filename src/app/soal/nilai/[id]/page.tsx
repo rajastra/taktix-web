@@ -20,7 +20,17 @@ interface Question {
   exam_id: number;
   question: string;
   image?: string;
+  question_type_id: number;
+  a: string;
+  b: string;
+  c: string;
+  d: string;
+  e: string;
   answer: string;
+  correct_statement_label?: string;
+  incorrect_statement_label?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface AttemptionResponse {
@@ -58,7 +68,7 @@ export default function Nilai({ params }: { params: { id: string } }) {
       try {
         setLoading(true);
         const examResponse = await axios.get(
-          `https://api.taktix.co.id/student/exam/${id}`,
+          `/api/exam/${id}`, // Pakai proxy dari next.config.js
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -71,7 +81,7 @@ export default function Nilai({ params }: { params: { id: string } }) {
         }
 
         const attemptionResponse = await axios.get(
-          `https://api.taktix.co.id/student/exam/${id}/attemption/${latestAttemption.id}`,
+          `/api/exam/${id}/attemption/${latestAttemption.id}`, // Pakai proxy
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -119,7 +129,7 @@ export default function Nilai({ params }: { params: { id: string } }) {
             <div className="text-center">
               <p className="text-gray-600">Skor</p>
               <p className="text-4xl font-bold text-green-600">
-                {attemptionData.score}%
+                {attemptionData.score}
               </p>
             </div>
             <div className="text-center">
@@ -159,13 +169,23 @@ export default function Nilai({ params }: { params: { id: string } }) {
                 const isCorrect = attemptionData.answers.find(
                   (a) => a.question_id === question.id
                 )?.is_correct;
+
                 return (
                   <div
                     key={question.id}
                     className="bg-gray-50 p-4 rounded-lg border border-gray-200"
                   >
                     <p className="text-sm text-gray-600">
-                      Soal {index + 1}: {question.question || "Tidak ada deskripsi"}
+                      Soal {index + 1}:{" "}
+                      {question.image ? (
+                        <img
+                          src={question.image}
+                          alt={`Soal ${index + 1}`}
+                          className="mt-2 max-w-full h-auto rounded"
+                        />
+                      ) : (
+                        question.question || "Tidak ada deskripsi"
+                      )}
                     </p>
                     <p className="text-sm">
                       Jawaban Anda:{" "}

@@ -54,7 +54,7 @@ export default function SoalDetail({ params }: { params: { id: string } }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <div className="h-6 w-2 rounded-lg bg-yellow-300"></div>
-          <h1 className="ml-4 my-2">Detail Ujian Kedinasan</h1>
+          <h1 className="ml-4 my-2">Detail Ujian</h1>
         </div>
       </div>
 

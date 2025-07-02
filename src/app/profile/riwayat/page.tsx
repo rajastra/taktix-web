@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useState, useEffect } from "react";
 import { jwtDecode, JwtPayload } from "jwt-decode";
@@ -82,6 +83,7 @@ export default function Riwayat({ params }: { params: { id?: string } }) {
       );
       if (!response.ok) throw new Error("Gagal mengambil data ujian.");
       const data: PaginationResponse = await response.json();
+      console.log("Fetched exam data:", data.data); // Debug data
       setExamData(data.data); // Ambil array exam
     } catch (error: any) {
       console.error("Failed to fetch exam data:", error);
@@ -147,13 +149,12 @@ export default function Riwayat({ params }: { params: { id?: string } }) {
                   {(exam.finished_attemption || []).map((attemption, attIndex) => (
                     <Link
                       key={attIndex}
-                      href={`/soal/${exam.id}`} // Redirect ke /soal/[id]
-                      className="block cursor-pointer no-underline focus:outline-none" // Hapus potensi blokir
+                      href={`/soal/${exam.id}`} // Redirect ke /soal/[exam.id]
+                      className="block cursor-pointer hover:bg-gray-50 transition"
                       onClick={(e) => {
-                        console.log("Clicked link to:", `/soal/${exam.id}`); // Debug
                         if (!exam.id) {
                           e.preventDefault();
-                          console.error("Exam ID is undefined");
+                          console.error("Exam ID is undefined for exam:", exam);
                         }
                       }}
                     >

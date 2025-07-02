@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -60,7 +59,7 @@ export default function KunciJawaban({ params }: { params: { id: string } }) {
       try {
         setLoading(true);
         const examResponse = await axios.get(
-          `https://api.taktix.co.id/student/exam/${id}`,
+          `/api/exam/${id}`, // Pakai proxy
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -73,7 +72,7 @@ export default function KunciJawaban({ params }: { params: { id: string } }) {
         }
 
         const attemptionResponse = await axios.get(
-          `https://api.taktix.co.id/student/exam/${id}/attemption/${latestAttemption.id}`,
+          `/api/exam/${id}/attemption/${latestAttemption.id}`, // Pakai proxy
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -141,7 +140,15 @@ export default function KunciJawaban({ params }: { params: { id: string } }) {
                 >
                   <td className="p-4 font-medium">{index + 1}</td>
                   <td className="p-4 text-gray-700">
-                    {question.question || "Tidak ada deskripsi soal"}
+                    {question.image ? (
+                      <img
+                        src={question.image}
+                        alt={`Soal ${index + 1}`}
+                        className="mt-2 max-w-full h-auto rounded-lg"
+                      />
+                    ) : (
+                      question.question || "Tidak ada deskripsi soal"
+                    )}
                   </td>
                   <td className="p-4 text-blue-600 font-semibold">
                     {question.answer || "Tidak tersedia"}

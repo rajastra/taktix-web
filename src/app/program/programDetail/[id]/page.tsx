@@ -58,7 +58,7 @@ export default function ProgramDetail() {
   // Fungsi menampilkan SweetAlert untuk "Party Belajar"
   const handlePartyBelajar = () => {
     Swal.fire({
-      title: "Fitur akan tersedia",
+      title: "Pesta belajar dapat dibuka saat sudah masuk jadwal",
       icon: "info",
       confirmButtonText: "OK",
       confirmButtonColor: "#16A34A", // Warna hijau

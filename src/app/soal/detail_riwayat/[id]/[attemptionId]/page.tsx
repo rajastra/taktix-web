@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
@@ -105,7 +106,7 @@ const dummyData: AttemptionDetail = {
   },
 };
 
-const options = ['a', 'b', 'c', 'd', 'e'] as const;
+type OptionKey = 'a' | 'b' | 'c' | 'd' | 'e';
 
 export default function DetailRiwayat() {
   const { id, attemptionId } = useParams(); // String dari URL
@@ -120,12 +121,12 @@ export default function DetailRiwayat() {
         if (!token) throw new Error('No token found');
 
         const response = await axios.get(
-          `https://api.taktix.co.id/student/exam/${id}/attemption/${attemptionId}`,
+          `/api/exam/${id}/attemption/${attemptionId}`, // Pakai proxy
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = response.data;
         console.log('API Response:', data); // Debug struktur data
-        if (!data || !data.answers || !data.exam || !data.exam.questions) {
+        if (!data || !data.exam || !data.exam.questions) {
           throw new Error('Data respons API tidak lengkap atau tidak valid');
         }
         setDetailData(data);
@@ -160,12 +161,21 @@ export default function DetailRiwayat() {
     );
   }
 
+  // Map jawaban pengguna berdasarkan question_id
+  const userAnswers = detailData.answers.reduce((acc, answer) => {
+    acc[answer.question_id] = {
+      answer: answer.answer.toUpperCase(),
+      is_correct: answer.is_correct,
+    };
+    return acc;
+  }, {} as Record<number, { answer: string; is_correct: boolean }>);
+
   return (
     <div className='mx-40 my-14'>
       <h1 className='text-2xl font-bold mb-6'>Detail Pengerjaan</h1>
       <div className='bg-white p-6 rounded-lg shadow-md'>
         <h2 className='text-xl font-semibold mb-4'>
-          Skor: {detailData.score}% | Benar: {detailData.total_correct} | Salah:{' '}
+          Skor: {detailData.score} | Benar: {detailData.total_correct} | Salah:{' '}
           {detailData.total_incorrect} | Kosong: {detailData.total_empty}
         </h2>
         <table className='w-full border-collapse'>
@@ -180,80 +190,56 @@ export default function DetailRiwayat() {
             </tr>
           </thead>
           <tbody>
-            {detailData.answers.length > 0 ? (
-              detailData.answers.map((answer, index) => {
-                const question = detailData.exam.questions.find(
-                  (q) => q.id === answer.question_id
-                );
-                if (!question) {
-                  console.warn(`Question not found for answer ID ${answer.id}`);
-                  return (
-                    <tr key={index} className='border-t'>
-                      <td
-                        colSpan={6}
-                        className='border p-2 text-center text-red-500'
-                      >
-                        Soal tidak ditemukan
-                      </td>
-                    </tr>
-                  );
-                }
-                const userAnswer = answer.answer
-                  ? answer.answer.toUpperCase()
-                  : 'Tidak dijawab';
-                const correctAnswer = question.answer.toUpperCase();
-                const isCorrect = answer.is_correct;
+            {detailData.exam.questions.map((question, index) => {
+              const userAnswerData = userAnswers[question.id] || {
+                answer: 'Tidak dijawab',
+                is_correct: false,
+              };
+              const correctAnswer = question.answer.toUpperCase();
+              const isCorrect = userAnswerData.is_correct;
 
-                return (
-                  <tr key={index} className='border-t'>
-                    <td className='border p-2'>{question.id}</td>
-                    <td className='border p-2'>
-                      {question.question ||
-                        (question.image && `Gambar: ${question.image}`) ||
-                        'Tanpa deskripsi'}
-                    </td>
-                    <td className='border p-2'>
-                      <ul className='list-disc pl-5'>
-                        {options.map((opt) => (
-                          <li key={opt} className='text-gray-700'>
-                            {opt.toUpperCase()}: {question[opt]}
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                    <td className='border p-2'>
-                      <span
-                        className={
-                          isCorrect ? 'text-green-600' : 'text-red-600'
-                        }
-                      >
-                        {userAnswer}
-                      </span>
-                    </td>
-                    <td className='border p-2'>
-                      <span className='font-semibold'>{correctAnswer}</span>
-                    </td>
-                    <td className='border p-2 flex items-center'>
-                      <FontAwesomeIcon
-                        icon={isCorrect ? faCheck : faTimes}
-                        className={
-                          isCorrect ? 'text-green-600' : 'text-red-600'
-                        }
+              return (
+                <tr key={question.id} className='border-t'>
+                  <td className='border p-2'>{index + 1}</td>
+                  <td className='border p-2'>
+                    {question.image ? (
+                      <img
+                        src={question.image}
+                        alt={`Soal ${index + 1}`}
+                        className='mt-2 max-w-full h-auto rounded-lg'
                       />
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td
-                  colSpan={6}
-                  className='border p-2 text-center text-gray-500'
-                >
-                  Tidak ada jawaban yang tersedia
-                </td>
-              </tr>
-            )}
+                    ) : (
+                      question.question || 'Tanpa deskripsi'
+                    )}
+                  </td>
+                  <td className='border p-2'>
+                    <ul className='list-disc pl-5'>
+                      {(['a', 'b', 'c', 'd', 'e'] as OptionKey[]).map((opt) => (
+                        <li key={opt} className='text-gray-700'>
+                          {opt.toUpperCase()}: {question[opt]}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td className='border p-2'>
+                    <span
+                      className={isCorrect ? 'text-green-600' : 'text-gray-600'}
+                    >
+                      {userAnswerData.answer}
+                    </span>
+                  </td>
+                  <td className='border p-2'>
+                    <span className='font-semibold'>{correctAnswer}</span>
+                  </td>
+                  <td className='border p-2 flex items-center'>
+                    <FontAwesomeIcon
+                      icon={isCorrect ? faCheck : faTimes}
+                      className={isCorrect ? 'text-green-600' : 'text-red-600'}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

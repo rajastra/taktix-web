@@ -41,6 +41,8 @@ export default function Riwayat({ params }: { params: { id: string } }) {
   const [examData, setExamData] = useState<ExamData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1); // Halaman saat ini
+  const [itemsPerPage] = useState(10); // Max 10 item per halaman
   const { id } = params;
   const router = useRouter();
 
@@ -67,7 +69,7 @@ export default function Riwayat({ params }: { params: { id: string } }) {
         if (!token) throw new Error("No token found");
 
         const response = await fetch(
-          `https://api.taktix.co.id/student/exam/${id}`,
+          `/api/exam/${id}`, // Pakai proxy
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -103,6 +105,16 @@ export default function Riwayat({ params }: { params: { id: string } }) {
     );
   }
 
+  // Logika pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = examData.finished_attemption.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(examData.finished_attemption.length / itemsPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const nextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+
   return (
     <div className="mx-40 my-14">
       <div className="flex items-center justify-between">
@@ -130,9 +142,9 @@ export default function Riwayat({ params }: { params: { id: string } }) {
             <p className="text-gray-600">Kategori: {examData.category.name}</p>
             <p className="text-gray-600">Mata Pelajaran: {examData.exam_category.name}</p>
 
-            {examData.finished_attemption.map((attemption, index) => (
+            {currentItems.map((attemption, index) => (
               <Link
-                key={index}
+                key={attemption.id}
                 href={`/soal/detail_riwayat/${id}/${attemption.id}`}
                 className="block"
               >
@@ -185,6 +197,35 @@ export default function Riwayat({ params }: { params: { id: string } }) {
                 </div>
               </Link>
             ))}
+
+            {/* Pagination */}
+            <div className="flex justify-center items-center space-x-4 mt-4">
+              <button
+                onClick={prevPage}
+                className="px-4 py-2 bg-gray-300 rounded-lg disabled:bg-gray-200"
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => paginate(i + 1)}
+                  className={`px-4 py-2 rounded-lg ${
+                    currentPage === i + 1 ? "bg-blue-700 text-white" : "bg-gray-300"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                onClick={nextPage}
+                className="px-4 py-2 bg-gray-300 rounded-lg disabled:bg-gray-200"
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
       </div>
